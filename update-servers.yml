@@ -1,0 +1,15 @@
+---
+- hosts: all
+  remote_user: root
+  tasks:
+
+  - name: Update
+    apt: update_cache=yes
+  - name: Upgrade
+    apt: upgrade=dist
+  - name: Check reboot
+    register: file
+    stat: path=/var/run/reboot-required get_md5=no
+  - name: Reboot if neccesary
+    command: /sbin/reboot
+    when: file.stat.exists == true
