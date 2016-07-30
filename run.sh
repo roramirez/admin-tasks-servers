@@ -6,11 +6,11 @@ if ! [ -x "$(command -v ansible-playbook)" ]; then
 	echo "Please install ansible"
 	exit 1
 fi
-
-export ANSIBLE_HOSTS=servers_hosts
+dirname=$(dirname -- "$0")
+export ANSIBLE_HOSTS=$dirname/servers_hosts
 
 
 echo "Check status"
 ansible all -m ping --user=root
 
-ansible-playbook update-servers.yml
+ansible-playbook $dirname/update-servers.yml
