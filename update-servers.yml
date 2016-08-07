@@ -11,5 +11,5 @@
     register: file
     stat: path=/var/run/reboot-required get_md5=no
   - name: Reboot if neccesary
-    command: /sbin/reboot
+    local_action: mail subject='System {{ ansible_hostname }} needs rebooting after upgrade.'
     when: file.stat.exists == true
