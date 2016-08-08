@@ -13,4 +13,10 @@ export ANSIBLE_HOSTS=$dirname/servers_hosts
 echo "Check status"
 ansible all -m ping --user=root
 
-ansible-playbook $dirname/update-servers.yml
+
+if [ "$1" = "reboot_now" ]; then
+	FLAGS="$FLAGS reboot_now=1"
+fi
+
+
+ansible-playbook $dirname/update-servers.yml -e "$FLAGS"
