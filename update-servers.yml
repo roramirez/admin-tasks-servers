@@ -2,6 +2,9 @@
 - hosts: all
   remote_user: root
   tasks:
+  vars:
+    f_reboot_now : false
+
 
   - name: Update
     apt: update_cache=yes
@@ -10,6 +13,19 @@
   - name: Check reboot
     register: file
     stat: path=/var/run/reboot-required get_md5=no
-  - name: Reboot if neccesary
+
+  - name: check_flag_reboot
+    set_fact:
+      f_reboot_now: true
+    when: reboot_now is defined
+
+  - debug:
+    var=f_reboot_now
+
+  - name: Send email for if reboot if neccesary
     local_action: mail subject='System {{ ansible_hostname }} needs rebooting after upgrade.'
-    when: file.stat.exists == true
+    when: file.stat.exists == true and f_reboot_now == false
+
+  - name: Reboot now
+    command: /sbin/reboot
+    when: file.stat.exists == true and f_reboot_now == true
